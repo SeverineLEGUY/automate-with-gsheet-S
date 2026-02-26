@@ -19,7 +19,7 @@ jobs:
         ports:
           - 5432:5432
         options: >-
-          --health-cmd "pg_isready -U jedha -d brightbooks"
+          --health-cmd "pg_isready -U postgres -d brightbooks"
           --health-interval 10s
           --health-timeout 5s
           --health-retries 5
@@ -27,10 +27,18 @@ jobs:
     env:
       DB_HOST: localhost
       DB_NAME: brightbooks
-      DB_USER: jedha
-      DB_PASSWORD: mysecretpassword
-      GOOGLE_SHEET_JSON: ${{ secrets.GOOGLE_SHEET_JSON }}
+      DB_USER: postgres
+      DB_PASSWORD: postgres
+      WORKSHEET: "Sheet1"
+      GOOGLE_SA_KEY_JSON: ${{ secrets.GOOGLE_SHEET_JSON }}
       SHEET_ID: ${{ secrets.SHEET_ID }}
+
+      PG_HOST: localhost
+      PG_PORT: 5432
+      PG_DB: brightbooks
+      PG_USER: postgres
+      PG_PASSWORD: postgres
+      PG_TABLE: brightbook_TB
 
     steps:
       - name: Checkout repo
