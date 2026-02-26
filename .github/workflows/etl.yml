@@ -61,3 +61,9 @@ jobs:
 
       - name: Run ETL
         run: python etl.py
+
+      - name: Verify data in Postgres
+        run: |
+          # On utilise psql qui est déjà présent sur l'image ubuntu
+          export PGPASSWORD=postgres
+          psql -h localhost -U postgres -d brightbooks -c "SELECT * FROM brightbook_TB LIMIT 10;"
