@@ -1,0 +1,57 @@
+
+
+name: ETL Automation with Docker PostgreSQL
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: '0 6 * * *'  # Tous les jours à 6h UTC
+
+jobs:
+  etl_job:
+    runs-on: ubuntu-latest
+
+    services:
+      postgres:
+        image: postgres:16
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_DB: brightbooks
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U jedha -d brightbooks"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+
+    env:
+      DB_HOST: localhost
+      DB_NAME: brightbooks
+      DB_USER: jedha
+      DB_PASSWORD: mysecretpassword
+      GOOGLE_SHEET_JSON: ${{ secrets.GOOGLE_SHEET_JSON }}
+      SHEET_ID: ${{ secrets.SHEET_ID }}
+
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v3
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.11'
+
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+
+      - name: Wait for PostgreSQL
+        run: |
+          until pg_isready -h $DB_HOST -U $DB_USER -d $DB_NAME; do
+            echo "Waiting for postgres..."
+            sleep 5
+          done
+
+      - name: Run ETL
+        run: python etl.py
