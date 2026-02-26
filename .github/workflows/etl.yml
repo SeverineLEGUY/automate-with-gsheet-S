@@ -38,7 +38,7 @@ jobs:
       PG_DB: brightbooks
       PG_USER: postgres
       PG_PASSWORD: postgres
-      PG_TABLE: brightbook_TB
+      PG_TABLE: brightbook_tb
 
     steps:
       - name: Checkout repo
@@ -66,4 +66,4 @@ jobs:
         run: |
           # On utilise psql qui est déjà présent sur l'image ubuntu
           export PGPASSWORD=postgres
-          psql -h localhost -U postgres -d brightbooks -c "SELECT * FROM brightbook_TB LIMIT 10;"
+          psql -h localhost -U postgres -d brightbooks -c "SELECT * FROM brightbook_tb LIMIT 10;"
